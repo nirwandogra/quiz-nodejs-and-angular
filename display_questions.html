@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>Sample Question Paper</title>
+<style>
+table, th , td {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+
+<div ng-app="" ng-controller="studentController">
+  <h2 ng-show="!flag">Sample Paper</h2>
+  <div ng-show="!flag">MULTIPLE CHOICE QUESTIONS</div>
+  <div ng-show='flag'>Number of Questions : </div><input name="number" ng-show="flag" ng-model="number"></input><br>
+  <div ng-show='flag'>Duration : </div><input name="dur" ng-show="flag" ng-model="dur"></input><br>
+   <div ng-repeat="student in questions">
+       [{{$index + 1}}] {{ student.question }} <br>
+       <INPUT TYPE="RADIO" VALUE="A" NAME="cc"> 
+       {{ student.opt1 }}<br>
+       <INPUT TYPE="RADIO" VALUE="B" NAME="cc"> 
+       {{ student.opt2 }}<br>
+       <INPUT TYPE="RADIO" VALUE="C" NAME="cc"> 
+       {{ student.opt3 }}<br>
+       <INPUT TYPE="RADIO" VALUE="D" NAME="cc"> 
+       {{ student.opt4 }}<br>
+       <VALUE="Duration(minutes)" NAME="cc"> 
+       Duration :{{ student.Duration }} minutes<br>
+       <br><br>
+    </div>
+    <div ng-show="!flag">SUBJECTIVE QUESTIONS</div>
+    <div ng-repeat="student in questions2">
+      [{{$index + 1}}] {{ student.question }} <br>
+       <textarea rows="4" cols="50">
+       </textarea>
+       <br><br>
+    </div>
+    <button ng-show="flag" ng-click="myData.doClick()">Start Quiz</button>
+     <button ng-show="!flag" ng-click="print_wind()">Print</button>
+</div>
+<script>
+function studentController($scope,$http) {
+   $scope.myData={};
+   $scope.flag=true;
+   $scope.number=1;
+   $scope.dur=1;
+   $scope.print_wind=function()
+   {
+      window.print();
+   }
+   $scope.myData.doClick = function() 
+   {
+                $scope.flag=false;
+                $http.post("/",{ 'number' : $scope.number  ,'dur' : $scope.dur }).success( function(response) {
+                  var url="subjective.json";
+                  $http.get(url).success( function(response) {
+                           $scope.questions2 = response;
+                        });
+                           $scope.questions = response;
+                          });
+            }
+}
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+</body>
+</html>
